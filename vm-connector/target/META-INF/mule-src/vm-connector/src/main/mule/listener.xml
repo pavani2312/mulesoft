@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="listenerFlow1" doc:id="c2fd6cc2-8062-4f85-b202-0ee576da349c" >
+		<http:listener doc:name="Listener" doc:id="b4474df3-72d8-4df8-9b1b-6be0dfb22bb2" config-ref="HTTP_Listener_config" path="/listener"/>
+		<logger level="INFO" doc:name="Logger" doc:id="18c041cd-749b-4dcc-8246-2eb65de6d37e" message='#[" Before Publish in Listener: " ++ payload]'/>
+		<set-variable value="1" doc:name="Set Variable" doc:id="ca1579ad-ff2a-4af5-9650-9a85275ff209" variableName="value"/>
+		<vm:publish queueName="Queue1" doc:name="Publish" doc:id="af52488b-07d6-43dc-ade4-365d22f5d12f" config-ref="VM_Config"/>
+	</flow>
+	<flow name="listenerFlow" doc:id="c477bbfd-440d-41e2-b542-4fe76c1f2eba" >
+		<vm:listener queueName="Queue1" doc:name="Listener" doc:id="63c0209e-c4cb-4a79-b0a1-72a52b848c06" config-ref="VM_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="66e43705-e522-48f3-aea9-cd5e44f0c39c" message='#["From Listener in Listener Flow : " ++ payload]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="bf0a9901-4a81-4635-9e09-988502574d4a" message="#[vars.value]"/>
+	</flow>
+</mule>

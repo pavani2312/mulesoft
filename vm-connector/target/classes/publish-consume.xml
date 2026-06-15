@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<flow name="publish-consumeFlow" doc:id="b177cd40-eef5-4928-98cf-c7a6db43bb92" >
+		<http:listener doc:name="Listener" doc:id="ae0d597a-c9f2-4ca0-a4c1-48125cc84477" config-ref="HTTP_Listener_config" path="/publishConsume"/>
+		<logger level="INFO" doc:name="Logger" doc:id="70463bc1-4ae4-461a-a601-2d33aca6154a" message='#["Before publish-consume flow : " ++ payload]'/>
+		<vm:publish-consume queueName="Queue3" doc:name="Publish consume" doc:id="d629b8b7-b7d8-4815-a65e-3571e51c0ebd" config-ref="VM_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a85188c5-4d39-45c0-9dcb-60d8a61a64da" message='#["After publish-consume flow : " ++ payload]'/>
+	</flow>
+	<flow name="publish-consumeFlow1" doc:id="e7f2bfd7-9270-4159-bd2e-0c45ea2b1d33" >
+		<vm:listener queueName="Queue3" doc:name="Listener" doc:id="1f93c32f-cf54-4c4a-97a9-8eb6757e6470" config-ref="VM_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="80230e82-042c-4395-981c-67ec64abc3e4" message='#["This is from publish-consume Listener : " ++ payload]'/>
+		<set-payload value="This is from Set Payload" doc:name="Set Payload" doc:id="033b6dfe-f63f-480a-9559-e3e5381083be" />
+		<logger level="INFO" doc:name="Logger" doc:id="923ea199-a682-4248-a506-01358d89b618" message='#["After Set payload in Listener : " ++ payload]'/>
+	</flow>
+</mule>

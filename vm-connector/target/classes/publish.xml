@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="84918efd-838e-468b-a43f-e65ae4ed6008" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="8f523f3b-f0e8-4639-a544-79354da404c2" >
+		<vm:queues >
+			<vm:queue queueName="Queue1" queueType="PERSISTENT" />
+			<vm:queue queueName="Queue2" queueType="PERSISTENT" />
+			<vm:queue queueName="Queue3" queueType="PERSISTENT" />
+		</vm:queues>
+	</vm:config>
+	<flow name="publishFlow" doc:id="ea8432ef-b00d-47e9-af37-4f7c4d0bd6a7" >
+		<http:listener doc:name="Listener" doc:id="6a895eba-086c-45b6-898c-f231c528bfdd" config-ref="HTTP_Listener_config" path="/publish"/>
+		<logger level="INFO" doc:name="Logger" doc:id="badcb248-52f6-40a0-aeae-4ddd74f18cf3" message='#["Before Publish in Publish Flow: " ++ payload]'/>
+		<vm:publish queueName="Queue1" doc:name="Publish" doc:id="243d69e6-ea98-45b3-ba49-b05bf8291a9d" config-ref="VM_Config"/>
+	</flow>
+</mule>
