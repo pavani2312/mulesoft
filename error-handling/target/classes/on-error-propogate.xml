@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="on-error-propogateFlow" doc:id="237b8beb-e74d-4d6b-85a5-91289c6d5fa8" >
+		<http:listener doc:name="Listener" doc:id="dde89080-f9a7-44eb-a3b8-46cfeb01dd90" config-ref="HTTP_Listener_config" path="/errorPropogate"/>
+		<flow-ref doc:name="Flow Reference" doc:id="d9d6525c-5b8f-4913-978c-21a37bcc9d34" name="on-error-propogateFlow1"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5d54b20a-2a54-46ce-a773-4cca70a72ccc" message="process completed"/>
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7c7971c2-d2d2-4e1b-a942-4e98a32cea7f" type="ANY">
+				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="eef44ff8-694a-4f12-a384-018600335ada" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="on-error-propogateFlow1" doc:id="f78ff029-aa14-4d8f-adc4-45bf9b2118c7" >
+		<ee:transform doc:name="Transform Message" doc:id="2bc82ec1-6fc9-4486-97a1-db8e4741f682" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name" : "pavani" + "satya"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="907c3bc8-7ebf-46aa-bade-acf61c0a9526" message="#[payload]"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="9d0e7e3d-f9b5-4314-9a5c-07b6338c81e5" >
+				<logger level="ERROR" doc:name="Logger" doc:id="3a757e88-c72c-4097-8c49-a4c1be09b332" message="error in on error propogate"/>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

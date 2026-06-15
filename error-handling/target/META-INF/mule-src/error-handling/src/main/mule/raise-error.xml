@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<configuration doc:name="Configuration" doc:id="157b557f-53fb-41db-8eed-8dd901d784c7" defaultErrorHandler-ref="global-error-handlerError_Handler" />
+	<flow name="raise-errorFlow" doc:id="1d9074af-e95c-4143-895b-394517288037" >
+		<http:listener doc:name="Listener" doc:id="d507bc97-f41f-4a53-872d-52a36622205d" config-ref="HTTP_Listener_config" path="/raiseError"/>
+		<logger level="INFO" doc:name="Logger" doc:id="740d433c-77b4-4233-b133-d56e3107e126" message="main flow logger before flow reference"/>
+		<flow-ref doc:name="Flow Reference" doc:id="b3d23992-ae12-478b-9d31-11532684eba5" name="try-scopeSub_Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="de41c20f-781a-4a61-8615-cce0278de12a" message="Log error : This is from the main flow"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6e564e47-1e54-46e2-94c2-f82ce8854943" type="EXPRESSION">
+				<logger level="INFO" doc:name="Logger" doc:id="8d8e9fc8-4f11-4688-836d-72f2f4ea7c7a" message="Error : This is from the error propogate in main flow"/>
+			</on-error-propagate>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b4f7159e-32d6-42cd-96ca-ed43c705e06e" type="ABD:CUSTOMERROR">
+				<logger level="INFO" doc:name="Logger" doc:id="8537d6fb-1aa4-45bb-b59b-2e05dd640cbc" message="Error : This is from the error continue in main flow having custom expression"/>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="63d4673c-41aa-46b1-81ea-65f83bb42c1a" type="ANY">
+				<logger level="INFO" doc:name="Logger" doc:id="5f6ee068-d13b-45f0-af18-9912ef915e3f" message="Error : This is from the error continue in main flow having ANY"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="raise-errorFlow1" doc:id="5710c96c-1627-4fc1-a878-a22c566ea27f" >
+		<ee:transform doc:name="Transform Message" doc:id="89d8f0d0-341f-410c-8075-0e5f5a5d4572" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "This message is from sub flow 1"
+}
+	]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="276e61a9-fb8e-4769-a0c7-18300339bb04" name="raise-errorFlow2"/>
+		<logger level="INFO" doc:name="Logger" doc:id="62213c70-829f-4973-9332-42d6ec00021a" message="Log error : This is from the raise error flow 1"/>
+	</flow>
+	<flow name="raise-errorFlow2" doc:id="f9dcd52a-5cf5-4c81-bea6-47aa7ae77832" >
+		<ee:transform doc:name="Transform Message" doc:id="5b85dadf-fcb3-4860-b28c-cd3df49dbb01" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" : "This message is from sub flow 2"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<raise-error doc:name="Raise error" doc:id="18c6b41a-158a-4e4b-b088-f06f50b94eef" type="ABD:CUSTOMERROR"/>
+		<logger level="INFO" doc:name="Logger" doc:id="86d22238-28de-450d-afa4-9685fa78ffe1" message="Log error : This is from the raise error flow 2 "/>
+	</flow>
+</mule>

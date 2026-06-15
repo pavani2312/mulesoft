@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="c89a5fd3-0a99-48bf-a357-4bb8c55f4b55" >
+		<email:smtp-connection host="smtp.gmail.com" port="587"/>
+	</email:smtp-config>
+	<flow name="error-mappingFlow" doc:id="7e55fd59-a0f9-4482-b369-122b08131d6f" >
+		<http:listener doc:name="Listener" doc:id="c37c399d-82b3-4f62-8a1f-74f340306157" config-ref="HTTP_Listener_config" path="/errorMapping"/>
+		<choice doc:name="Choice" doc:id="9b79d70e-a460-4d35-8b61-cdd4ef9b4134" >
+			<when expression='#[payload.requestPath == "errorMap1"]'>
+				<http:request doc:name="Request_A" doc:id="283bf6fe-774a-47f7-824f-c85ab957d9bb" path="errorMap3"/>
+			</when>
+			<otherwise >
+				<http:request doc:name="Request_B" doc:id="959d7794-6015-4518-aec0-25a46df6a0b9" path="http://localhost:8081/errorMap2">
+					<error-mapping targetType="CUSTOM:ERROR_FROM_REQUESTER_B" />
+				</http:request>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="50f0b907-5b27-456d-bbc6-28dc4f1b050d" message="This from Error Mapping flow"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="dc6d5b22-8e40-4128-b9a1-7d925c760e4c" type="HTTP:NOT_FOUND">
+				<logger level="INFO" doc:name="Logger" doc:id="f5185011-280e-4a00-8390-077225c43c8d" message="This is from HTTP : BAD_REQUEST"/>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b24f61a3-bd34-423d-9ae8-511688fe499b" type="CUSTOM:ERROR_FROM_REQUESTER_B">
+				<logger level="INFO" doc:name="Logger" doc:id="f6192a9d-5ce8-4c6f-9f99-14c01d281bf7" message="#[error.description]"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="error-mappingFlow1" doc:id="e66c394f-acc7-4b4a-886b-8f756e4225cf" >
+		<http:listener doc:name="Listener" doc:id="9a91e37a-44bc-44fd-b565-6de18b7f3bc6" config-ref="HTTP_Listener_config" path="/errorMap1"/>
+		<set-payload value="This from Error Mapping 1" doc:name="Set Payload" doc:id="623360c3-8ec9-42fa-8185-9fce38488afb" />
+	</flow>
+	<flow name="error-mappingFlow2" doc:id="63f8a0da-2409-4a84-b886-e9b16bc3d16f" >
+		<http:listener doc:name="Listener" doc:id="eccaa17c-d26d-4624-8c76-42e51619d67c" config-ref="HTTP_Listener_config" path="/errorMap2"/>
+		<set-payload value="This from Error Mapping 2" doc:name="Set Payload" doc:id="08f6af5f-d65f-40df-8b08-38387e62a3c1" />
+	</flow>
+</mule>

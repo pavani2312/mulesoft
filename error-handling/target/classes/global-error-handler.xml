@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<error-handler name="global-error-handlerError_Handler" doc:id="99725cc6-1f07-49e6-90ac-128850aac03e" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4b29f687-9740-48fc-b87c-e0fa92a044df" type="EXPRESSION">
+			<logger level="INFO" doc:name="Logger" doc:id="24d4d0f9-2d39-4594-8da5-aa5917bd734b" message="Error : This is from the error propogate in main flow"/>
+		</on-error-propagate>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3b9c915f-a05d-4a2f-b2a2-4fadf744c44b" type="ABD : CUSTOMERROR">
+			<logger level="INFO" doc:name="Logger" doc:id="552c0b3b-83fd-4065-b0c6-ee289fe96ab0" message="Error : This is from the error continue in main flow having custom expression"/>
+		</on-error-continue>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a1f506d4-0d82-4034-86fa-6b7f8a3f05d4" type="ANY">
+			<logger level="INFO" doc:name="Logger" doc:id="663c3250-a190-446c-9a38-de85ff6a25e0" message="Error : This is from the error continue in main flow having ANY"/>
+		</on-error-continue>
+	</error-handler>
+</mule>

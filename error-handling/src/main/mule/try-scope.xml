@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="try-scopeSub_Flow" doc:id="148d4cf1-409a-4ebb-a597-1def193e2823" >
+		<logger level="INFO" doc:name="Logger" doc:id="c1c5863b-a2c0-4ac7-b46f-b2f61d3b49b1" message="This from the sub flow"/>
+		<try doc:name="Try" doc:id="c14fb354-5de0-4463-a666-4b926dc4e3f5" >
+			<http:request doc:name="Request" doc:id="40f01edb-1da2-48f7-9d4b-26b5ae0dc2ff" path="bad request" />
+			<set-payload value="#[payload]" doc:name="Set Payload" doc:id="5694ae99-8f19-44b9-92b7-bd09c27afb42" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="482e4cef-5a35-423d-a9a9-723ddfea0390" type="ANY">
+					<set-payload value="#[payload]" doc:name="Set Payload" doc:id="70e50143-3e22-4b5f-a780-721fe839f649" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Logger" doc:id="2cc2ef82-2a5f-4fa3-8020-434e5f2e85c8" message="The process from Sub flow"/>
+	</sub-flow>
+</mule>

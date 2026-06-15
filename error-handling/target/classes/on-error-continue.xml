@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="750d967a-add4-4289-a41b-63f71f5fa936" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="on-error-continueFlow" doc:id="e87a9261-9aaa-479c-b2ec-8c4a2810b785" >
+		<http:listener doc:name="Listener" doc:id="03c5fd27-48ca-4375-bc0f-f868964fff69" config-ref="HTTP_Listener_config" path="/errorContinue"/>
+		<flow-ref doc:name="Flow Reference" doc:id="9d5c3971-dac6-4991-b838-09b6c7618225" name="on-error-continueFlow1"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ebe9a27a-7a89-453c-858d-11a9281b634a" message="On error continue is processed"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b214d492-19cc-4757-a2e6-a6d13eb55953" type="ANY">
+				<set-payload value="Error in On error Continue" doc:name="Set Payload" doc:id="dd1c82bb-dc5d-461f-a912-550440c38de0" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="on-error-continueFlow1" doc:id="fd6c42a3-25f3-48b5-bc36-cb5f2cd46050" >
+		<ee:transform doc:name="Transform Message" doc:id="21440471-eb87-4b85-adbe-92f3061097c3">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name" : "pavani" + "satya"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="180f45c1-794d-4504-91a3-1fc46efc54b2" type="ANY">
+				<set-payload value="#[error.description]" doc:name="Set Payload" doc:id="00ceadd7-45d7-4def-b603-2a8f7274cf6a" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>
