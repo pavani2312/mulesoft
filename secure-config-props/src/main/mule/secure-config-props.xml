@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4fad78b8-7b4c-4ee1-b1a2-30f0d00eeaa1" >
+		<http:listener-connection host="${secure::http.host}" port="${secure::http.port}" />
+	</http:listener-config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="55b3c9e2-e1da-4c69-ac6a-d106dcbb8825" file="secureProps.yaml" key="mulesoft12345678" />
+	<flow name="secure-config-propsFlow" doc:id="64195d8b-e797-4314-87f0-87908120d449" >
+		<http:listener doc:name="Listener" doc:id="ef4be08b-4ba2-4f22-b96e-ce16468ee490" config-ref="HTTP_Listener_config" path="${secure::http.listener.path}"/>
+		<logger level="INFO" doc:name="Logger" doc:id="3bfff834-78d3-4ef2-bbf6-0cdc4dd4920b" message="#[payload]"/>
+	</flow>
+</mule>
